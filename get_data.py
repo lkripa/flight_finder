@@ -2,12 +2,15 @@ import requests, json
 import sys
 import pandas as pd
 
+# TODO: handle inbound legs,
+#       check for valid currencies,
+#       extend db beyond Europe
+#       get all final info into pandas table?
+
 def match_skyscanner(city_list):
     """
     Match user-defined cities (or countries) with corresponding IDs required by Skyscanner API
-
     :param city_list: city name (or country), provided by the user
-    
     Returns Skyscanner API's corresponding ID
     """
     city_id = []
@@ -25,8 +28,7 @@ def match_skyscanner(city_list):
 
 def get_user_params():
     """
-    Define user preferences 
-
+    Define user preferences
     Return dict of parameters, and return_trip to indicate whether one-way or round-trip
     """
     #default
@@ -50,7 +52,6 @@ def get_user_params():
         except:
             print('The names provided don\'t match any cities or countries! Please try again: ')  
     
-    # TODO: some checks for valid dates, ex format / after today
     date_outbound = input('Please provide the desired outbound date (yyyy-mm-dd): ')
     #date_inbound = input('Please provide the desired inbound date (yyyy-mm-dd): ')
     print()
@@ -147,7 +148,7 @@ def get_flights(headers, params, return_trip):
                         print()         
                     print(f"Total price: {price} EUR")
                 
-    return outbound, inbound
+    return outbound, inbound, airport_ID, carrier_ID
 
 
 def main():
@@ -161,12 +162,14 @@ def main():
     params, return_trip = get_user_params()
 
     print("Requesting flight data...")
-    outbound, inbound = get_flights(headers, params, return_trip)
+    outbound, inbound, airport_ID, carrier_ID = get_flights(headers, params, return_trip)
     
     num = len(outbound)
     print(f"Number of possible flights to be analyzed: {num}")
 
     print("Done!")
+
+    return params, outbound, inbound, airport_ID, carrier_ID
 
 
 if __name__ == "__main__":
