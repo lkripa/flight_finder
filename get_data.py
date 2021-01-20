@@ -1,5 +1,6 @@
 import requests, json
 import sys
+import pandas as pd
 
 def match_skyscanner(city_list):
     """
@@ -11,13 +12,14 @@ def match_skyscanner(city_list):
     """
     city_id = []
 
-    # load database
-    db = []
+    # load database, for now as a csv 8kb
+    db_names =  pd.read_csv('SkyscannerAPIplaces.csv', sep=',')
 
     # look up ID for each item in list
     for city in city_list:
-        # look up city.lower(), replace - with space, remove . , extra spaces
-        city_id.append(db[city])
+        clean_city = city.lower().replace('-', ' ').replace('.', '')
+        clean_city = " ".join(clean_city.split())
+        city_id.append(db_names.loc[db_names['Name'] == clean_city, 'ID'].iloc[0])
 
     return city_id
 
@@ -30,26 +32,39 @@ def get_user_params():
     #default
     return_trip = False
 
-    # ask user for data
-    origin_list = input('Please provide the two origin cities (separated by a space): ')
-    destination_list = input('Please provide possible destination cities or countries (separated by a space): ')
-    currency = input('What currency would you like to view prices in? [EUR, USD, GBP, CHF]')
-    date_inbound = input('Please provide the desired outbound date (yyyy-mm-dd): ')
+    # ask user for data and match with names in database
+    while True:
+        origin_list = (input('Please provide the two origin cities (separated by a comma): ')).split(',')
+        try:
+            origin_list_ids = match_skyscanner(origin_list)
+            break
+        except:
+            print()
+            print('The names provided don\'t match any cities or countries! Please try again: ')
 
-    origin_list_ids = match_skyscanner(origin_list)
-    destination_list = match_skyscanner(destination_list)
+    while True:
+        destination_list = (input('Please provide possible destinations (separated by a comma): ')).split(',')
+        try:
+            destination_list_ids = match_skyscanner(destination_list)
+            break
+        except:
+            print('The names provided don\'t match any cities or countries! Please try again: ')  
+    
+    # TODO: some checks for valid dates, ex format / after today
+    date_outbound = input('Please provide the desired outbound date (yyyy-mm-dd): ')
+    #date_inbound = input('Please provide the desired inbound date (yyyy-mm-dd): ')
+    print()
 
-    # these need to be user defined later on, + match_skyscanner()
     params = {
         'origin' : origin_list_ids,
         'origin_country' : 'ES',
         'destination' : destination_list_ids,
-        'currency': currency,
+        'currency': 'EUR',
         'locale': 'en-US',
-        'date_outbound' : date_inbound,
+        'date_outbound' : date_outbound,
         'date_inbound' : None,
         'root_url': "https://skyscanner-skyscanner-flight-search-v1.p.rapidapi.com/apiservices/browsequotes/v1.0/",
-        'show_flight_info': True
+        'show_flight_info': False
         }
     
     if params['date_inbound'] != None:
@@ -142,6 +157,7 @@ def main():
         }
 
     print("Processing user-defined parameters...")
+    print()
     params, return_trip = get_user_params()
 
     print("Requesting flight data...")
