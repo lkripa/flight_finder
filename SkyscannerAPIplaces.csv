@@ -1,0 +1,287 @@
+ID,Name
+ES-sky,spain
+MAD-sky,madrid
+BCN-sky,barcelona
+ALC-sky,alicante
+AGP-sky,malaga
+PMI-sky,palma majorca
+PMI-sky,la palma
+PMI-sky,la palma majorca
+IBZ-sky,ibiza
+TENE-sky,tenerfie
+FR-sky,france
+NCE-sky,nice
+PARI-sky,paris
+BOD-sky,bordeaux
+MRS-sky,marseille
+TLS-sky,toulouse
+IT-sky,italy
+NAP-sky,naples
+MILA-sky,milan
+BLQ-sky,bologna
+ROME-sky,rome
+UK-sky,united kingdom
+MAN-sky,manchester
+LOND-sky,london
+BHX-sky,birmingham
+CH-sky,switzerland
+GVA-sky,geneva
+ZRH-sky,zurich
+BSL-sky,basel
+BRN-sky,bern
+LUG-sky,lugano
+ACH-sky,st gallen
+ACH-sky,st gallen altenrhein
+SIR-sky,sion
+DE-sky,germany
+MUC-sky,munich
+FRAN-sky,frankfurt
+CGN-sky,cologne
+STR-sky,stuttgart
+DUSS-sky,dusseldorf
+NO-sky,norway
+OSLO-sky,oslo
+BGO-sky,bergen
+SVG-sky,stavanger
+TRD-sky,trondheim
+TOS-sky,trom
+AES-sky,aalesund vigra
+AES-sky,aalesund
+SE-sky,sweden
+STOC-sky,stockholm
+GOTH-sky,gothenburg
+MMX-sky,malmo sturup
+MMX-sky,malmo
+FI-sky,finland
+HEL-sky,helsinki
+TKU-sky,turku
+VAA-sky,vaasa
+RVN-sky,rovaniemi
+OUL-sky,oulu
+TMP-sky,tampere
+KTT-sky,kittila
+LPP-sky,lappeenranta
+POR-sky,pori
+IS-sky,iceland
+REYK-sky,reykjavik
+AEY-sky,akureyri
+EGS-sky,egilsstadir
+HFN-sky,hofn horafjorur
+HFN-sky,horafjorur
+HFN-sky,hofn
+HZK-sky,husavik
+VEY-sky,vestmannaeyjar
+GRY-sky,grimsey
+IE-sky,ireland
+DUB-sky,dublin
+ORK-sky,cork
+BELF-sky,belfast
+SNN-sky,shannon
+LDY-sky,derry
+KIR-sky,kerry
+PL-sky,poland
+WAW-sky,warsaw
+KRK-sky,krakow
+GDN-sky,gdansk
+WRO-sky,wroclaw
+WMI-sky,warsaw
+WMI-sky,warsaw modlin
+KTW-sky,katowice
+POZ-sky,poznan
+RZE-sky,rzeszow
+SZZ-sky,szczecin goleniow
+SZZ-sky,szczecin
+SZZ-sky,goleniow
+PT-sky,portugal
+LIS-sky,lisbon
+FAO-sky,faro
+OPO-sky,porto
+FNC-sky,madeira
+PDL-sky,ponta delgada
+HOR-sky,horta
+PIX-sky,pico
+PIX-sky,pico island
+TER-sky,terceira lajes
+TER-sky,terceira
+PXO-sky,porto santo
+HR-sky,croatia
+ZAG-sky,zagreb
+SPU-sky,split
+DBV-sky,dubrovnik
+ZAD-sky,zadar
+PUY-sky,pula
+RJK-sky,rijeka
+OSI-sky,osijek
+BWK-sky,bol
+LSZ-sky,mali losinj losinj
+LSZ-sky,mali
+RS-sky,serbia
+BELI-sky,belgrade
+INI-sky,nis
+KVO-sky,morava
+UMD-sky,uummannaq
+BE-sky,belgium
+BRUS-sky,brussels
+ANR-sky,antwerp
+OST-sky,ostend bruges
+OST-sky,bruges
+LGG-sky,liege
+KJK-sky,kortrijk
+IXG-sky,belgaum
+NL-sky,netherlands
+AMS-sky,amsterdam
+EIN-sky,eindhoven
+RTM-sky,rotterdam
+MST-sky,maastricht
+GRQ-sky,groningen
+AT-sky,austria
+VIE-sky,vienna
+SZG-sky,salzburg
+GRZ-sky,graz
+INN-sky,innsbruck
+KLU-sky,klagenfurt
+LNZ-sky,linz
+BG-sky,bulgaria
+SOF-sky,sofia
+BOJ-sky,bourgas
+VAR-sky,varna
+PDV-sky,plovdiv
+KDR-sky,kardjali
+MT-sky,malta
+CY-sky,cyprus
+LCA-sky,larnaca
+PFO-sky,paphos
+ECN-sky,ercan
+DK-sky,denmark
+COPE-sky,copenhagen
+BLL-sky,billund
+AAL-sky,aalborg
+AAR-sky,aarhus
+EBJ-sky,esbjerg
+ODE-sky,odense
+EE-sky,estonia
+TLL-sky,tallinn
+TAY-sky,tartu
+URE-sky,kuressaare
+KDL-sky,kardla
+GR-sky,greece
+ATH-sky,athens
+CRET-sky,crete
+THES-sky,thessaloniki
+CFU-sky,corfu
+RHO-sky,rhodes
+ZTH-sky,zante
+ZTH-sky,zakynthos
+JTR-sky,santorini
+JTR-sky,thira
+JTR-sky,santorini thira
+JMK-sky,mykonos
+HU-sky,hungary
+BUD-sky,budapest
+DEB-sky,debrecen
+QZD-sky,szeged
+PEV-sky,pecs
+SOB-sky,balaton
+LV-sky,latvia
+RIX-sky,riga
+LPX-sky,liepaya
+LT-sky,lithuania
+VNO-sky,vilnius
+KUN-sky,kaunas
+PLQ-sky,palanga
+LUX-sky,luxembourg
+RO-sky,romania
+OTP-sky,bucharest
+CLJ-sky,cluj-napoca
+IAS-sky,iasi
+TSR-sky,timisoara
+BCM-sky,bacau
+CND-sky,constanta kogalniceanu
+CND-sky,constanta
+SBZ-sky,sibius
+CRA-sky,craiova
+SCV-sky,suceava salcea
+SK-sky,slovakia
+BTS-sky,bratislava
+KSC-sky,kosice
+TAT-sky,poprad tatry
+SI-sky,slovenia
+LJU-sky,ljubljana
+MBX-sky,maribor
+AL-sky,albania
+TIA-sky,tirana
+MK-sky,north macedonia
+SKP-sky,skopje
+OHD-sky,ohrid
+KO-sky,kosovo
+PRN-sky,pristina
+UA-sky,ukraine
+KIEV-sky,kyiv
+KIEV-sky,kiev
+LWO-sky,lviv
+ODS-sky,odesa
+HRK-sky,kharkiv
+DNK-sky,dnipro
+OZH-sky,zaporizhia
+KHE-sky,kherson
+MD-sky,moldova
+KIV-sky,chisinau
+RU-sky,russia
+LED-sky,st petersburg
+LED-sky,st petersburg pulkovo
+MOSC-sky,moscow
+KRR-sky,krasdonar
+SVX-sky,ekaterinburg
+BY-sky,belarus
+MSQA-sky,minsk
+BQT-sky,brest
+GME-sky,gomel
+GNA-sky,grodna
+VTB-sky,vitebsk
+CZ-sky,czechia
+CZ-sky,czech republic
+PRG-sky,prague
+BRQ-sky,brno turany
+OSR-sky,ostrava
+PED-sky,pardubice
+KLV-sky,karlovy vary
+KZ-sky,kazakhstan
+ALA-sky,almaty
+GUW-sky,atyrau
+SCO-sky,aktau
+URA-sky,uralsk
+CIT-sky,shimkent
+KZO-sky,kzyl orda
+KGF-sky,karaganda
+AKX-sky,aktobe
+PLX-sky,semipalatinsk
+BA-sky,bosnia and herzegovina
+BA-sky,bosnia herzegovina
+BA-sky,bosnia
+SJJ-sky,sarajevo
+TZL-sky,tuzla
+BNX-sky,banja luka
+OMO-sky,mostar
+AM-sky,armenia
+EVN-sky,yerevan
+LWN-sky,gyoumri
+ME-sky,montenegro
+TGD-sky,podgorica
+TIV-sky,tivat
+HNO-sky,hereg novi
+HNO-sky,hereg
+AZ-sky,azerbaijan
+GYD-sky,baku
+KVD-sky,gyandzha
+LLK-sky,lankaran
+GBB-sky,qabala
+NAJ-sky,nakhichevan
+GE-sky,georgia
+TBS-sky,tbilisi
+KUT-sky,kutaisi
+BUS-sky,batumi
+AD-sky,andorra
+LI-sky,liechtenstein
+MC-sky,monaco
+MCM-sky,monte carlo
+SM-sky,san marino
