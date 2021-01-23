@@ -1,6 +1,7 @@
 import requests, json
 import sys
 import pandas as pd
+from tqdm import tqdm
 
 # TODO: handle inbound legs - for now only doing specific airports so limits the return flights,
 #       check for valid currencies,
@@ -112,7 +113,9 @@ def get_flights(headers, params, return_trip):
     df_outbound = pd.DataFrame(columns = columns)
     df_inbound = pd.DataFrame(columns = columns)
 
-    for origin in params['origin']:
+    print()
+    print('Processing flight data...')
+    for origin in tqdm(params['origin']):
         for destination in params['destination']:
 
             try:
