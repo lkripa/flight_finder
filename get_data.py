@@ -73,6 +73,7 @@ def get_user_params(show_flight_info):
     else:
         return_trip = True
         print('       return trip confirmed!')
+    num_flights = input('How many flights would you like to see? (ex enter 3 to see top 3 cheapest flights) ')
 
     print()
 
@@ -84,6 +85,7 @@ def get_user_params(show_flight_info):
         'locale': 'en-US',
         'date_outbound' : date_outbound,
         'date_inbound' : date_inbound,
+        'num_flights' : num_flights,
         'root_url': "https://skyscanner-skyscanner-flight-search-v1.p.rapidapi.com/apiservices/browsequotes/v1.0/",
         'show_flight_info': show_flight_info
         }
