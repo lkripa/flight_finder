@@ -3,8 +3,8 @@ import pandas as pd
 import json
 import numpy as np
 
-#TODO: extend beyond 2 origin cities
-#      return flight
+#TODO: extend beyond 2 origin cities?
+#      figure out how to combine with return flight
 
 def get_common_dest(df):
     """
@@ -75,7 +75,7 @@ def print_top_flights(params, df_common_dest):
         total_price = df_common_dest.loc[flight,'total_price']
         currency = params['currency']
 
-        print(str(flight+1)+'st cheapest flight:')
+        print('#' +str(flight+1)+' cheapest flight:')
         print(f'First Outbound Journey: {origin_name_1}({origin_id_1}) -> {dest_name}({dest_id})')
         print(f'with {carrier_1} at {price_1} {currency}')
         print(f'Second Outbound Journey: {origin_name_2}({origin_id_2}) -> {dest_name}({dest_id})')
@@ -104,7 +104,7 @@ def main():
         print('INBOUND FLIGHTS-------')
         print('Date: ', params['date_inbound'])
         print('Getting common destinations and calculating prices...')
-        df_common_dest_inbound = get_common_dest(df_inbound)
+        #df_common_dest_inbound = get_common_dest(df_inbound)
         
         # have to figure out how to combine inbound and outbound
         # 

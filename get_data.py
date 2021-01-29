@@ -5,7 +5,6 @@ from tqdm import tqdm
 
 # TODO: handle inbound legs - for now only doing specific airports so limits the return flights,
 #       check for valid currencies,
-#       get all final info into pandas table?
 #       offer date range for inbound and outbound (vs specific dates)
 
 def match_skyscanner(city_list):
