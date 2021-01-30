@@ -26,7 +26,7 @@ ORDER BY country, region
 ```
 3. Load table with SQLAlchemy and add additional required field, such as Skyscanner's IATA IDs (`city_codes.csv`)
 4. Get flight parameters from user (cities, dates...), and match cities and destinations to `city_codes.csv` entries
-5. Run GET request from Skyscanner API's BrowseQuotes endpoint with user parameters using Skyscanner's IATA IDs retrieved in previous step
+5. Run GET request from [Skyscanner API's](https://skyscanner.github.io/slate/#api-documentation) BrowseQuotes endpoint (through [RapidAPI](https://rapidapi.com/skyscanner/api/skyscanner-flight-search?endpoint=5aa1eab3e4b00687d3574279)) with user parameters using Skyscanner's IATA IDs retrieved in previous step
 6. Parse results for relevant data (i.e. airport names, cities, carriers, and prices)
 7. Match common city destination options and save to dataframe
 8. Rank options according to total price from two origins
