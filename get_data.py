@@ -2,6 +2,7 @@ import requests, json
 import sys
 import pandas as pd
 from tqdm import tqdm
+import config
 
 # TODO: handle inbound legs - for now only doing specific airports so limits the return flights,
 #       check for valid currencies,
@@ -205,7 +206,7 @@ def get_flights(headers, params, return_trip):
 def main(show_flight_info=False):
     headers = {
         'x-rapidapi-host': "skyscanner-skyscanner-flight-search-v1.p.rapidapi.com",
-        'x-rapidapi-key': "a25c140655mshcc3de02bc48e78fp1d8ae5jsn716b89dc608a"
+        'x-rapidapi-key': config.api_key
         }
 
     print("Processing user-defined parameters...")
