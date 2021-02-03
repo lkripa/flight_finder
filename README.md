@@ -24,12 +24,12 @@ The goal of this project is to **find the optimal (in this case, cheapest) commo
 1. Use [datahub.io's](https://datahub.io/core/airport-codes) `airport-codes` dataset, includes airport names, cities, IATA_codes, and geolocation (lat & long)
 2. Create new SQLLite database, load above dataset, and create new table with relevant fields
 ```SQL
-SELECT municipality AS city_name, iso_country AS country, iso_region AS region, name AS airport_name, latitude_deg, longitude_deg, iata_code
+SELECT name AS airport_name,  latitude_deg, longitude_deg, iso_country AS country, iso_region AS region, municipality AS city, iata_code, iata_code ||  '-sky' AS iata_sky_code, municipality || ' (' || iso_country || ')' AS city_user
 FROM airports
-WHERE iata_code IS NOT NULL  AND city_name IS NOT NULL
+WHERE iata_code IS NOT NULL  AND city IS NOT NULL
 ORDER BY country, region
 ```
-3. Load table with SQLAlchemy and add additional required field, such as Skyscanner's IATA IDs (`city_codes.csv`)
+3. Load table with SQLAlchemy, additionally save as csv (`city_codes.csv`)
 4. Get flight parameters from user (cities, dates...), and match cities and destinations to `city_codes.csv` entries
 5. Run GET request from [Skyscanner API's](https://skyscanner.github.io/slate/#api-documentation) BrowseQuotes endpoint (through [RapidAPI](https://rapidapi.com/skyscanner/api/skyscanner-flight-search?endpoint=5aa1eab3e4b00687d3574279)) with user parameters using Skyscanner's IATA IDs retrieved in previous step
 6. Parse results for relevant data (i.e. airport names, cities, carriers, and prices)
