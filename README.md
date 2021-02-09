@@ -29,6 +29,10 @@ FROM airports
 WHERE iata_code IS NOT NULL  AND city IS NOT NULL
 ORDER BY country, region
 ```
+Available Airports:
+
+![Available Airports](airports.png)
+
 3. Load table with SQLAlchemy, additionally save as csv (`city_codes.csv`)
 4. Get flight parameters from user (cities, dates...), and match cities and destinations to `city_codes.csv` entries
 5. Run GET request from [Skyscanner API's](https://skyscanner.github.io/slate/#api-documentation) BrowseQuotes endpoint (through [RapidAPI](https://rapidapi.com/skyscanner/api/skyscanner-flight-search?endpoint=5aa1eab3e4b00687d3574279)) with user parameters using Skyscanner's IATA IDs retrieved in previous step
