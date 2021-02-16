@@ -6,41 +6,27 @@ import config
 import time
 
 # TODO: handle inbound legs - for now only doing specific airports so limits the return flights,
-#       check for valid currencies,
+#       check for valid currencies
 #       offer date range for inbound and outbound (vs specific dates)
 
 def match_skyscanner(city_list):
     """
     Match user-defined cities (or countries) with corresponding IDs required by Skyscanner API
     :param city_list: list of city names, provided by the user from dropdown of city_user 
-                      ex. [London (GB), Boston (US)]
+                      ex. [London (GB),Boston (US)]
     Returns all IDs of all airports that serve that city
     """
     city_id = []
     table = pd.read_csv('Data/city_codes.csv')
-    # The first city processes properly, 
-    # but the second one does not search through because of A SPACE
+    # Process inputs with spaces
     if len(city_list) > 1 and city_list[1][0] == " ":
         city_list[1] = city_list[1][1:]
-        # print(city_list[1])
-    for city in city_list:
-        # print("one ",table.loc[table['city_user'] == city, 'iata_sky_code'])
-        #ONE becomes a series: Series([], Name: iata_sky_code, dtype: object)
-        # print("two ",list( table.loc[table['city_user'] == city, 'iata_sky_code'] ))
-        city_id.append(list( table.loc[table['city_user'] == city, 'iata_sky_code'] ))
-        # print("city", city)
-        # print("city_id: ", city_id)
-        
-    # city_id.append(list( table.loc[table['city_user'] == city_list[1], 'iata_sky_code'] ))
-    # print("city_id: ", city_id)
-    # # SOMETHING WRONG WITH THE SECOND CITY
-    # city_id.append(list( table.loc[table['city_user'] == city_list[0], 'iata_sky_code'] ))
-    # print("city_id - total: ", city_id)
-    # print("city_id - 0: ", city_id[0])
-    # print("city_id - 1 : ", city_id[1])
 
+    for city in city_list:
+        city_id.append(list( table.loc[table['city_user'] == city, 'iata_sky_code'] ))
+    
     city_id_list = [city for sub_city in city_id for city in sub_city]
-    # print("city_id_list:", city_id_list)
+
     return city_id_list
 
 def assign_city_names(airport_iata_code):
@@ -138,7 +124,6 @@ def get_flights(headers, params, return_trip):
     columns = ['origin_sky_id', 'origin_iata_id', 'dest_sky_id', 'dest_iata_id', 'price', 'carrier','date']
     df_outbound = pd.DataFrame(columns = columns)
     df_inbound = pd.DataFrame(columns = columns)
-    querystring = {"shortapikey":"ra66933236979928","apiKey":"{shortapikey}"}
 
     print()
     print('Processing flight data...')
@@ -149,6 +134,7 @@ def get_flights(headers, params, return_trip):
 
             try:
                 count += 1
+                # Pause API request because of Basic account limit
                 if count % 50 == 0:
                     print("-----------")
                     print("PAUSED")
@@ -187,8 +173,8 @@ def get_flights(headers, params, return_trip):
                         carrier_outbound = quotes["OutboundLeg"]["CarrierIds"] #list of IDs,int
                         dest_outbound = quotes["OutboundLeg"]["DestinationId"]
                         price = quotes["MinPrice"]
-                        date = quotes["OutboundLeg"]["DepartureDate"]
-                        # date = whole_date[0]
+                        whole_date = quotes["OutboundLeg"]["DepartureDate"].split("T")
+                        date = whole_date[0]
 
                         # match to IDs
                         origin_iata_id = airport_ID[origin_outbound]

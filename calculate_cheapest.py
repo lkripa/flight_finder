@@ -10,7 +10,9 @@ import numpy as np
 #       * combine arrays with different dates - can store dates with cheapest price on top in master array
 
 ''' Ideas for Frontend:
-They can pick two start origin and an end destination, the dates and price comes out in a popup
+    They can pick two start origin and an end destination, the dates and price comes out in a popup
+    TODO: Need to create the array with one date and the cheapest flight that date, showing the cheapest
+    on top.
 '''
 
 
@@ -44,30 +46,19 @@ def get_common_dest(df):
             df_origin_list.append(df_byOrigin)
         try: 
             # assuming 2 origin cities
+            # print ("------------------------")
             # print("df_origin_list[0] \n", df_origin_list[0])
-            # print("len", np.shape(df_origin_list[0]))
-            # df_origin_list_0 = pd.DataFrame(df_origin_list[0])
-            # print("\n ----MOMENT OF TRUTH!!!!--- \n",df_origin_list_0)
             # print("df_origin_list[1] \n", df_origin_list[1])
             # print ("------------------------")
             city_name_1 = (df_origin_list[0].dest_city_name.to_numpy())[:, np.newaxis]
             city_name_2 = (df_origin_list[1].dest_city_name.to_numpy())[np.newaxis, :]
-            # print("cityNAME1", city_name_1)
-            # print("cityNAME2", city_name_2) 
-            # print("equal", np.equal(city_name_1, city_name_2))
-            # EMPTY ^^^^ this np.equal does not work
-            # ind = pd.DataFrame(np.argwhere(np.equal(df_origin_list[0].dest_city_name[:, np.newaxis].to_numpy(),\
-            #     df_origin_list[1].dest_city_name.to_numpy()[np.newaxis, :])), columns=['ind1', 'ind2'])
+
             ind = pd.DataFrame(np.argwhere(np.equal(city_name_1, city_name_2)), columns=['ind1', 'ind2'])
-            # print ("ind dataframe: ", ind)
-            # print ("*****MERGING*****", ind.merge(df_origin_list_0, left_on='ind1', right_index=True))
-            # print("df_origin_list[0]", df_origin_list[0])
-            # print(ind.dtypes)
             df_common_dest = ind.merge(df_origin_list[0], left_on='ind1', right_index=True).merge(df_origin_list[1], \
                 left_on='ind2', right_index=True, suffixes=['_1', '_2'])
-            # print(df_common_dest.dtypes)
-            # print("df_common_dest", df_common_dest)
+
             df_common_dest.drop(columns=['ind1', 'ind2'], inplace=True)
+            
             # add total price col
             df_common_dest['total_price'] = df_common_dest['price_1'] + df_common_dest['price_2']
 
@@ -78,12 +69,9 @@ def get_common_dest(df):
             if not df_common_dest.empty:
                 print()
                 print('=========')
-                print('Sorting by price...')
-                print("date: ", all_dates[i],' #',i)
-                print("df_common_dest", df_common_dest)
+                print("Date: ", all_dates[i],' #',i,'/',len(all_dates))
+                print(df_common_dest)
                 print('=========')
-            # else:
-            #     print("No common destination with this date found")
         except Exception: 
             print("No common destination with this date found")
             df_common_dest = pd.DataFrame()
