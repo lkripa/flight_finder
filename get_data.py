@@ -249,7 +249,7 @@ def get_flights(headers, params, return_trip):
 
 def main(show_flight_info=False):
     headers = {
-    'x-rapidapi-key': "084f78c5c5mshf7c49aa2baf9685p1258a0jsnce551a20b861",
+    'x-rapidapi-key': config.api_key,
     'x-rapidapi-host': "skyscanner-skyscanner-flight-search-v1.p.rapidapi.com"
     }
 
