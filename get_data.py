@@ -41,7 +41,7 @@ def assign_city_names(airport_iata_code):
 
     return city_name
 
-def get_user_params(show_flight_info):
+def get_user_params(origin_list, show_flight_info ):
     """
     Define user preferences
     Return dict of parameters, and return_trip to indicate whether one-way or round-trip
@@ -53,17 +53,17 @@ def get_user_params(show_flight_info):
     return_trip = False
 
     # ask user for data and match with names in database
-    while True:
+    # while True:
         # origin_list = (input('Please provide the two origin cities (separated by a comma): ')).split(',')
-        origin_list = message["input"] #['Madrid (ES)', 'Zurich (CH)']
-        
+        # origin_list = message["input"] #['Madrid (ES)', 'Zurich (CH)']
+
         # origin_list = ['Miami (US)', 'New York (US)']
-        try:
-            origin_list_ids = (match_skyscanner(origin_list))
-            break
-        except:
-            print()
-            print('The names provided don\'t match any cities or countries! Please try again: ')
+    try:
+        origin_list_ids = (match_skyscanner(origin_list))
+        
+    except:
+        print()
+        print('The names provided don\'t match any cities or countries! Please try again: ')
 
     while True:
         # destination_list = (input('Please provide possible destinations (separated by a comma): ')).split(',')
@@ -243,26 +243,26 @@ def get_flights(headers, params, return_trip):
     return df_outbound, df_inbound
 
 
-def main(show_flight_info=False):
-    headers = {
-    'x-rapidapi-key': config.api_key,
-    'x-rapidapi-host': "skyscanner-skyscanner-flight-search-v1.p.rapidapi.com"
-    }
+# def main(show_flight_info=False):
+#     headers = {
+#     'x-rapidapi-key': config.api_key,
+#     'x-rapidapi-host': "skyscanner-skyscanner-flight-search-v1.p.rapidapi.com"
+#     }
 
-    print("Processing user-defined parameters...")
-    print()
-    params, return_trip = get_user_params(show_flight_info)
+#     print("Processing user-defined parameters...")
+#     print()
+#     params, return_trip = get_user_params(origin_list, show_flight_info)
 
-    print("Requesting flight data...")
-    df_outbound, df_inbound = get_flights(headers, params, return_trip)
+#     print("Requesting flight data...")
+#     df_outbound, df_inbound = get_flights(headers, params, return_trip)
     
-    num = len(df_outbound)
-    print(f"Number of possible flights to be analyzed: {num}")
-    print()
-    print("Done!")
+#     num = len(df_outbound)
+#     print(f"Number of possible flights to be analyzed: {num}")
+#     print()
+#     print("Done!")
 
-    return params, df_outbound, df_inbound
+#     return params, df_outbound, df_inbound
 
 
-if __name__ == "__main__":
-    main()
+# if __name__ == "__main__":
+#     main()
