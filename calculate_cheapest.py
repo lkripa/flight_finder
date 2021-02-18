@@ -10,10 +10,9 @@ import numpy as np
 #       * combine arrays with different dates - can store dates with cheapest 
 #           price on top in master array
 
-''' Ideas for Frontend:
-    They can pick two start origin and an end destination, the dates and price comes out in a popup
-    TODO: Need to create the array with one date and the cheapest flight that date, 
-    showing the cheapeston top.
+''' 
+    Ideas for Frontend:
+    They can pick two start origin and an end destination, the dates and price comes out in a popup!
 '''
 
 
@@ -70,8 +69,7 @@ def get_common_dest(df):
 
             # sort by total price (least to most)
             df_common_dest = df_common_dest.sort_values(['total_price']).reset_index(drop=True)
-            #! This sets up sorting it by price and the dates. Need to have it visually show up with 
-            #! the cheapest flights
+
             if isFirst:
                 df_main = df_common_dest.copy(deep=True)
                 # df_first = df_common_dest.copy(deep=True)

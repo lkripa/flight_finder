@@ -8,6 +8,8 @@ import time
 # TODO: handle inbound legs - for now only doing specific airports so limits the return flights,
 #       check for valid currencies
 #       offer date range for inbound and outbound (vs. specific dates)
+#       add requirements.txt list
+#       implement speed test to find the 40 second delay
 
 def match_skyscanner(city_list):
     """
@@ -243,26 +245,28 @@ def get_flights(headers, params, return_trip):
     return df_outbound, df_inbound
 
 
-# def main(show_flight_info=False):
-#     headers = {
-#     'x-rapidapi-key': config.api_key,
-#     'x-rapidapi-host': "skyscanner-skyscanner-flight-search-v1.p.rapidapi.com"
-#     }
-
-#     print("Processing user-defined parameters...")
-#     print()
-#     params, return_trip = get_user_params(origin_list, show_flight_info)
-
-#     print("Requesting flight data...")
-#     df_outbound, df_inbound = get_flights(headers, params, return_trip)
+def main(show_flight_info=False):
+    origin_list = ["Madrid(ES)", "Zurich (CH)"]
     
-#     num = len(df_outbound)
-#     print(f"Number of possible flights to be analyzed: {num}")
-#     print()
-#     print("Done!")
+    headers = {
+    'x-rapidapi-key': config.api_key,
+    'x-rapidapi-host': "skyscanner-skyscanner-flight-search-v1.p.rapidapi.com"
+    }
 
-#     return params, df_outbound, df_inbound
+    print("Processing user-defined parameters...")
+    print()
+    params, return_trip = get_user_params(origin_list, show_flight_info)
+
+    print("Requesting flight data...")
+    df_outbound, df_inbound = get_flights(headers, params, return_trip)
+    
+    num = len(df_outbound)
+    print(f"Number of possible flights to be analyzed: {num}")
+    print()
+    print("Done!")
+
+    return params, df_outbound, df_inbound
 
 
-# if __name__ == "__main__":
-#     main()
+if __name__ == "__main__":
+    main()
