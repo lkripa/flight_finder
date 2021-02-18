@@ -6,7 +6,6 @@ from calculate_cheapest import get_common_dest, save_df_to_json
 import config
 
 
-
 app = Flask(__name__)
 CORS(app)
 
