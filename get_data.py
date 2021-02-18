@@ -3,20 +3,26 @@ import sys
 import pandas as pd
 from tqdm import tqdm
 import config
+import time
 
 # TODO: handle inbound legs - for now only doing specific airports so limits the return flights,
-#       check for valid currencies,
-#       offer date range for inbound and outbound (vs specific dates)
+#       check for valid currencies
+#       offer date range for inbound and outbound (vs. specific dates)
+#       add requirements.txt list
+#       implement speed test to find the 40 second delay
 
 def match_skyscanner(city_list):
     """
     Match user-defined cities (or countries) with corresponding IDs required by Skyscanner API
     :param city_list: list of city names, provided by the user from dropdown of city_user 
-                      ex. [London (GB), Boston (US)]
+                      ex. [London (GB),Boston (US)]
     Returns all IDs of all airports that serve that city
     """
     city_id = []
     table = pd.read_csv('Data/city_codes.csv')
+    # Uncomment to process user inputs with spaces
+    # if len(city_list) > 1 and city_list[1][0] == " ":
+    #     city_list[1] = city_list[1][1:]
 
     for city in city_list:
         city_id.append(list( table.loc[table['city_user'] == city, 'iata_sky_code'] ))
@@ -37,7 +43,7 @@ def assign_city_names(airport_iata_code):
 
     return city_name
 
-def get_user_params(show_flight_info):
+def get_user_params(origin_list, show_flight_info ):
     """
     Define user preferences
     Return dict of parameters, and return_trip to indicate whether one-way or round-trip
@@ -49,32 +55,39 @@ def get_user_params(show_flight_info):
     return_trip = False
 
     # ask user for data and match with names in database
-    while True:
-        origin_list = (input('Please provide the two origin cities (separated by a comma): ')).split(',')
-        try:
-            origin_list_ids = match_skyscanner(origin_list)
-            break
-        except:
-            print()
-            print('The names provided don\'t match any cities or countries! Please try again: ')
+    # while True:
+        # origin_list = (input('Please provide the two origin cities (separated by a comma): ')).split(',')
+        # origin_list = message["input"] #['Madrid (ES)', 'Zurich (CH)']
 
-    while True:
-        destination_list = (input('Please provide possible destinations (separated by a comma): ')).split(',')
-        try:
-            destination_list_ids = match_skyscanner(destination_list)
-            break
-        except:
-            print('The names provided don\'t match any cities or countries! Please try again: ')  
+        # origin_list = ['Miami (US)', 'New York (US)']
+    try:
+        origin_list_ids = (match_skyscanner(origin_list))
+        
+    except:
+        print()
+        print('The names provided don\'t match any cities or countries! Please try again: ')
+
+    # while True:
+    # destination_list = (input('Please provide possible destinations (separated by a comma): ')).split(',')
+    # destination_list = ['Los Angeles (US)', 'London (GB)']
+    destination_list = ['London (GB)']
+    try:
+        destination_list_ids = match_skyscanner(destination_list)
+        break
+    except:
+        print('The names provided don\'t match any cities or countries! Please try again: ')  
     
-    date_outbound = input('Please provide the desired outbound date (yyyy-mm-dd): ')
-    date_inbound = input('Please provide the desired inbound date (yyyy-mm-dd), or enter a space if only one-way trip: ')
+    # date_outbound = input('Please provide the desired outbound date (yyyy-mm-dd): ')
+    # date_inbound = input('Please provide the desired inbound date (yyyy-mm-dd), or enter a space if only one-way trip: ')
+    date_outbound ='anytime'
+    date_inbound = 'anytime'
     if date_inbound == ' ':
         date_inbound = None
     else:
         return_trip = True
         print('       return trip confirmed!')
-    num_flights = input('How many flights would you like to see? (ex enter 3 to see top 3 cheapest flights) ')
-
+    # num_flights = input('How many flights would you like to see? (ex enter 3 to see top 3 cheapest flights) ')
+    num_flights = 3
     print()
 
     params = {
@@ -91,6 +104,18 @@ def get_user_params(show_flight_info):
         }
 
     return params, return_trip
+
+def pause_API():
+    """
+    API Rate Limit: 50 per minute (unlimited requests)
+    Create a pause to allow all the calls to go through.
+    """
+    print("-----------")
+    print("-----------")
+    print("PAUSED")
+    print("-----------")
+    print("-----------")
+    time.sleep(60)
 
 def get_flights(headers, params, return_trip):
     """
@@ -111,16 +136,24 @@ def get_flights(headers, params, return_trip):
     carrier_ID = {}
     currency = params['currency']
 
-    columns = ['origin_sky_id', 'origin_iata_id', 'dest_sky_id', 'dest_iata_id', 'price', 'carrier']
+    columns = ['origin_sky_id', 'origin_iata_id', 'dest_sky_id', 'dest_iata_id', 'price', 'carrier','date']
     df_outbound = pd.DataFrame(columns = columns)
     df_inbound = pd.DataFrame(columns = columns)
 
     print()
     print('Processing flight data...')
+    count = 0
+
     for origin in tqdm(params['origin']):
         for destination in params['destination']:
 
             try:
+                count += 1
+                # Pause API request because of Basic account limit
+                if count % 50 == 0:
+                    pause_API()
+                    
+                print("-----------Request from API---------------", count)
                 # API request - Browse Flight Searches
                 myurl = params['root_url'] + params['origin_country'] + "/" + params['currency'] + "/" + params['locale'] + "/"  + \
                     origin + "/" + destination + "/" + params['date_outbound']
@@ -129,17 +162,22 @@ def get_flights(headers, params, return_trip):
                     #querystring = {"inboundpartialdate" : params['date_inbound']}
                     #r = requests.request("GET", myurl, headers=headers, params=querystring)
                     myurl += '/' + params["date_inbound"]
-                
+                print(myurl)
                 r = requests.request("GET", myurl, headers=headers)
+                print(r.text)
                 temp = json.loads(r.text)
-
+                if temp == {'message': 'You have exceeded the rate limit per minute for your plan, BASIC, by the API provider'}:
+                    pause_API()
+                print(temp)
                 # Extract relevant flight info
                 # build dicts with IDs (int) : IATA codes of airports or names of carriers
+                
                 for places in temp["Places"]:
                     airport_ID[places["PlaceId"]] = places["IataCode"] 
                 
                 for carrier in temp["Carriers"]:
                     carrier_ID[carrier["CarrierId"]] = carrier["Name"]
+                
                 
                 # assign route info (with matched names) to outbound and inbound lists
                 if "Quotes" in temp: 
@@ -149,6 +187,8 @@ def get_flights(headers, params, return_trip):
                         carrier_outbound = quotes["OutboundLeg"]["CarrierIds"] #list of IDs,int
                         dest_outbound = quotes["OutboundLeg"]["DestinationId"]
                         price = quotes["MinPrice"]
+                        whole_date = quotes["OutboundLeg"]["DepartureDate"].split("T")
+                        date = whole_date[0]
 
                         # match to IDs
                         origin_iata_id = airport_ID[origin_outbound]
@@ -158,13 +198,14 @@ def get_flights(headers, params, return_trip):
                         carrier_name = carrier_ID[carrier_outbound[0]]
 
                         df_outbound = df_outbound.append({'origin_sky_id': origin_sky_id, 'origin_iata_id': origin_iata_id, \
-                            'dest_sky_id':dest_sky_id, 'dest_iata_id':dest_iata_id, 'price':price, \
-                                'carrier': carrier_name}, ignore_index=True)
-
+                             'dest_sky_id':dest_sky_id, 'dest_iata_id':dest_iata_id, 'price':price, \
+                                'carrier': carrier_name, 'date': date}, ignore_index=True)
+                        
                         if return_trip:
                             origin_inbound = quotes["InboundLeg"]["OriginId"]
                             dest_inbound = quotes["InboundLeg"]["DestinationId"]
                             carrier_inbound = quotes["InboundLeg"]["CarrierIds"]
+                            # date_inbound = quotes["InboundLeg"]["DepartureDate"]
 
                             origin_iata_id = airport_ID[origin_inbound]
                             origin_sky_id = origin_iata_id + '-sky'
@@ -174,7 +215,7 @@ def get_flights(headers, params, return_trip):
 
                             df_inbound = df_inbound.append({'origin_sky_id': origin_sky_id, 'origin_iata_id': origin_iata_id, \
                                 'dest_sky_id':dest_sky_id, 'dest_iata_id':dest_iata_id, 'price':price, \
-                                    'carrier': carrier_name}, ignore_index=True)
+                                    'carrier': carrier_name, 'date': date}, ignore_index=True)
 
                         if params['show_flight_info']:
                             print("-----------")
@@ -186,32 +227,36 @@ def get_flights(headers, params, return_trip):
                                 print(f"Carrier: {carrier_ID[carrier_inbound[0]]}")     
                                 print()         
                             print(f"Total price: {price} {currency}")
-
             except:
                 # airport is not in Skyscanner database
                 # ideally can get a database of valid skyscanner airports and further filter the city_codes table with it
                 continue
     
     # add corresponding city names to dataframes
-    df_outbound['origin_city_name'] = df_outbound.apply(lambda row: assign_city_names(row['origin_iata_id']), axis=1)
-    df_outbound['dest_city_name'] = df_outbound.apply(lambda row: assign_city_names(row['dest_iata_id']), axis=1)
+    try:
+        df_outbound['origin_city_name'] = df_outbound.apply(lambda row: assign_city_names(row['origin_iata_id']), axis=1)
+        df_outbound['dest_city_name'] = df_outbound.apply(lambda row: assign_city_names(row['dest_iata_id']), axis=1)
 
-    if return_trip:
-        df_inbound['origin_city_name'] = df_inbound.apply(lambda row: assign_city_names(row['origin_iata_id']), axis=1)
-        df_inbound['dest_city_name'] = df_inbound.apply(lambda row: assign_city_names(row['dest_iata_id']), axis=1)
-                
+        if return_trip:
+            df_inbound['origin_city_name'] = df_inbound.apply(lambda row: assign_city_names(row['origin_iata_id']), axis=1)
+            df_inbound['dest_city_name'] = df_inbound.apply(lambda row: assign_city_names(row['dest_iata_id']), axis=1)
+    except Exception:
+        print('Origin City Not Found')
+
     return df_outbound, df_inbound
 
 
 def main(show_flight_info=False):
+    origin_list = ["Madrid(ES)", "Zurich (CH)"]
+    
     headers = {
-        'x-rapidapi-host': "skyscanner-skyscanner-flight-search-v1.p.rapidapi.com",
-        'x-rapidapi-key': config.api_key
-        }
+    'x-rapidapi-key': config.api_key,
+    'x-rapidapi-host': "skyscanner-skyscanner-flight-search-v1.p.rapidapi.com"
+    }
 
     print("Processing user-defined parameters...")
     print()
-    params, return_trip = get_user_params(show_flight_info)
+    params, return_trip = get_user_params(origin_list, show_flight_info)
 
     print("Requesting flight data...")
     df_outbound, df_inbound = get_flights(headers, params, return_trip)

@@ -11,7 +11,11 @@ The goal of this project is to **find the optimal (in this case, cheapest) commo
 
 ## Run locally
 1. Clone this repo
-2. Run `$python calculate_cheapest.py`. You will be prompted to provide two user cities, possible destination cities that you wish to consider, outbound and inbound flight dates, and number of flights (ranked in order of total price) to display
+2. Set up  Environment 
+- `python3 -m venv venv`
+- `source venv/bin/activate`
+- `pip install -r requirements.txt`
+3. Run `$python calculate_cheapest.py`. You will be prompted to provide two user cities, possible destination cities that you wish to consider, outbound and inbound flight dates, and number of flights (ranked in order of total price) to display
   * Note: You'll have to provide your personal [RapidAPI key](https://rapidapi.com/skyscanner/api/skyscanner-flight-search) (free!). Once you have one, assign `api_key` in a separate `config.py` file. 
 
 ## Files

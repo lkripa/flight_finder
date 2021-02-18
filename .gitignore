@@ -1,0 +1,12 @@
+#ide
+/.vscode
+/.idea
+
+#api key
+config.py
+
+#misc
+__pycache__
+
+#virtual env
+/venv
