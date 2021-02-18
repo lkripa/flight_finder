@@ -15,7 +15,8 @@ The goal of this project is to **find the optimal (in this case, cheapest) commo
 - `python3 -m venv venv`
 - `source venv/bin/activate`
 - `pip install -r requirements.txt`
-3. Run `$python calculate_cheapest.py`. You will be prompted to provide two user cities, possible destination cities that you wish to consider, outbound and inbound flight dates, and number of flights (ranked in order of total price) to display
+3. Run `flask run` to start server
+4. Run `$python calculate_cheapest.py`. You will be prompted to provide two user cities, possible destination cities that you wish to consider, outbound and inbound flight dates, and number of flights (ranked in order of total price) to display
   * Note: You'll have to provide your personal [RapidAPI key](https://rapidapi.com/skyscanner/api/skyscanner-flight-search) (free!). Once you have one, assign `api_key` in a separate `config.py` file. 
 
 ## Files
@@ -44,4 +45,15 @@ Available Airports:
 7. Match common city destination options and save to dataframe
 8. Rank options according to total price from two origins
 
+## For Full Webapp Functionality
+### Installation
+ - Install [npm](https://www.npmjs.com/get-npm)
+ - Download this repo with `git clone https://github.com/lkripa/projectNeptune.git`
+ - Run `npm install` within the main folder 
 
+### Run Flask locally
+Run `flask run` to start server
+
+### Run this code locally
+Simply run: `npm start` <br />
+Then checkout the website on `localhost:3000`
