@@ -4,6 +4,7 @@ import json
 from get_data import get_user_params, get_flights
 from calculate_cheapest import get_common_dest, save_df_to_json
 import config
+import time
 
 
 app = Flask(__name__)
@@ -23,11 +24,14 @@ def cityPost():
 
   print("Processing user-defined parameters...")
   print()
+  start = time.perf_counter()
   params, return_trip = get_user_params(origin_list, show_flight_info)
 
   print("Requesting flight data...")
   df_outbound, df_inbound = get_flights(headers, params, return_trip)
-  
+  marker1 = time.perf_counter()
+  #! Here is the time suckers
+  print(f"marker1 from beginning in {marker1 - start:0.4f} seconds")
   num = len(df_outbound)
   print(f"Number of possible flights to be analyzed: {num}")
   print()
@@ -37,7 +41,11 @@ def cityPost():
   print('OUTBOUND FLIGHTS-------')
   print('Date: ', params['date_outbound'])
   print('Getting common destinations and calculating prices...')
+  marker2 = time.perf_counter()
   df_common_dest_outbound = get_common_dest(df_outbound)
+  marker3 = time.perf_counter()
+  print(f"marker2-3 from beginning in {marker3 - marker2:0.4f} seconds")
+
   print()
   print('Saving flights to sorted_common_dest.txt')
   save_df_to_json(df_common_dest_outbound, 'Data/sorted_common_dest.json')
@@ -53,7 +61,8 @@ def cityPost():
       
       # have to figure out how to combine inbound and outbound
       # 
-
+  stop = time.perf_counter()
+  print(f"cityPost from beginning in {stop - start:0.4f} seconds")
   print()
   print('Done!')
 

@@ -8,8 +8,8 @@ import time
 # TODO: handle inbound legs - for now only doing specific airports so limits the return flights,
 #       check for valid currencies
 #       offer date range for inbound and outbound (vs. specific dates)
-#       add requirements.txt list
 #       implement speed test to find the 40 second delay
+#       figure out why when inbound is active (3x longer processing)
 
 def match_skyscanner(city_list):
     """
@@ -73,7 +73,6 @@ def get_user_params(origin_list, show_flight_info ):
     destination_list = ['London (GB)']
     try:
         destination_list_ids = match_skyscanner(destination_list)
-        break
     except:
         print('The names provided don\'t match any cities or countries! Please try again: ')  
     
@@ -81,7 +80,7 @@ def get_user_params(origin_list, show_flight_info ):
     # date_inbound = input('Please provide the desired inbound date (yyyy-mm-dd), or enter a space if only one-way trip: ')
     date_outbound ='anytime'
     date_inbound = 'anytime'
-    if date_inbound == ' ':
+    if date_inbound == ' ' or date_inbound == 'anytime':
         date_inbound = None
     else:
         return_trip = True
@@ -132,6 +131,7 @@ def get_flights(headers, params, return_trip):
     Returns dataframe of outbound and inbound flight info, including airport IDs, city names,
             carrier names, and total price of journey
     """
+    beginning = time.perf_counter()
     airport_ID = {}
     carrier_ID = {}
     currency = params['currency']
@@ -150,6 +150,7 @@ def get_flights(headers, params, return_trip):
             try:
                 count += 1
                 # Pause API request because of Basic account limit
+                #! ERROR This will cause a problem if temp gets activated under 50
                 if count % 50 == 0:
                     pause_API()
                     
@@ -231,7 +232,7 @@ def get_flights(headers, params, return_trip):
                 # airport is not in Skyscanner database
                 # ideally can get a database of valid skyscanner airports and further filter the city_codes table with it
                 continue
-    
+    start = time.perf_counter()
     # add corresponding city names to dataframes
     try:
         df_outbound['origin_city_name'] = df_outbound.apply(lambda row: assign_city_names(row['origin_iata_id']), axis=1)
@@ -242,7 +243,9 @@ def get_flights(headers, params, return_trip):
             df_inbound['dest_city_name'] = df_inbound.apply(lambda row: assign_city_names(row['dest_iata_id']), axis=1)
     except Exception:
         print('Origin City Not Found')
-
+    stop = time.perf_counter()
+    print(f"get_flights after API in {stop - start:0.4f} seconds")
+    print(f"get_flights from beginning in {stop - beginning:0.4f} seconds")
     return df_outbound, df_inbound
 
 
