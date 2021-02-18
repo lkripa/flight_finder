@@ -7,7 +7,7 @@ import time
 
 # TODO: handle inbound legs - for now only doing specific airports so limits the return flights,
 #       check for valid currencies
-#       offer date range for inbound and outbound (vs specific dates)
+#       offer date range for inbound and outbound (vs. specific dates)
 
 def match_skyscanner(city_list):
     """
@@ -55,7 +55,9 @@ def get_user_params(show_flight_info):
     # ask user for data and match with names in database
     while True:
         # origin_list = (input('Please provide the two origin cities (separated by a comma): ')).split(',')
-        origin_list = ['Madrid (ES)', 'Paris (FR)']
+        origin_list = message["input"] #['Madrid (ES)', 'Zurich (CH)']
+        
+        # origin_list = ['Miami (US)', 'New York (US)']
         try:
             origin_list_ids = (match_skyscanner(origin_list))
             break
@@ -75,8 +77,8 @@ def get_user_params(show_flight_info):
     
     # date_outbound = input('Please provide the desired outbound date (yyyy-mm-dd): ')
     # date_inbound = input('Please provide the desired inbound date (yyyy-mm-dd), or enter a space if only one-way trip: ')
-    date_outbound ='anytime'#'2021-02-20 ''
-    date_inbound = 'anytime'#'2021-03-04'
+    date_outbound ='anytime'
+    date_inbound = 'anytime'
     if date_inbound == ' ':
         date_inbound = None
     else:
@@ -101,6 +103,14 @@ def get_user_params(show_flight_info):
         }
 
     return params, return_trip
+
+def pauseAPI():
+    print("-----------")
+    print("-----------")
+    print("PAUSED")
+    print("-----------")
+    print("-----------")
+    time.sleep(60)
 
 def get_flights(headers, params, return_trip):
     """
@@ -135,11 +145,9 @@ def get_flights(headers, params, return_trip):
             try:
                 count += 1
                 # Pause API request because of Basic account limit
+                # add 
                 if count % 50 == 0:
-                    print("-----------")
-                    print("PAUSED")
-                    print("-----------")
-                    time.sleep(60)
+                    pauseAPI()
                     
                 print("-----------Goes in---------------", count)
                 # API request - Browse Flight Searches
@@ -154,6 +162,8 @@ def get_flights(headers, params, return_trip):
                 r = requests.request("GET", myurl, headers=headers)
                 print(r.text)
                 temp = json.loads(r.text)
+                if temp == {'message': 'You have exceeded the rate limit per minute for your plan, BASIC, by the API provider'}:
+                    pauseAPI()
                 print(temp)
                 # Extract relevant flight info
                 # build dicts with IDs (int) : IATA codes of airports or names of carriers
