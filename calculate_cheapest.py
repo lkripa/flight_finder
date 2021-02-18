@@ -6,9 +6,7 @@ import numpy as np
 # TODO: 
 #       * extend beyond 2 origin cities?
 #       * figure out how to combine with return flight
-#       * SET PARAMETERS AT START
-#       * combine arrays with different dates - can store dates with cheapest 
-#           price on top in master array
+#       * combine arrays with different dates more effectively 
 
 ''' 
     Ideas for Frontend:
@@ -28,11 +26,8 @@ def get_common_dest(df):
     isFirst = True
 
     origin_cities = df['origin_city_name'].unique()
-    # print("what do you look like ?", df)
-    # print(origin_cities)
     all_dates = df['date'].unique()
-    # print("length of dates",len(all_dates))
-    # df_common_dest = pd.DataFrame()
+    
     for i in range(len(all_dates)):
         df_byDate = (df[ df.date == all_dates[i] ]).reset_index(drop=True)
         # list of flights dfs by origin
@@ -40,18 +35,10 @@ def get_common_dest(df):
         for city in origin_cities:
             # possible flights per origin
             # df_byOrigin = (df[ df.origin_city_name == city ]).reset_index(drop=True)
-
             df_byOrigin = (df_byDate[ df_byDate.origin_city_name == city ]).reset_index(drop=True)
-            # print ("===================")
-            # print(df_byOrigin)
-            # print ("===================")
             df_origin_list.append(df_byOrigin)
         try: 
             # assuming 2 origin cities
-            # print ("------------------------")
-            # print("df_origin_list[0] \n", df_origin_list[0])
-            # print("df_origin_list[1] \n", df_origin_list[1])
-            # print ("------------------------")
             city_name_1 = (df_origin_list[0].dest_city_name.to_numpy())[:, np.newaxis]
             city_name_2 = (df_origin_list[1].dest_city_name.to_numpy())[np.newaxis, :]
 
@@ -85,6 +72,7 @@ def get_common_dest(df):
                 print('=========')
         except Exception: 
             print("No common destination with this date found")
+    # sort df_main for "total_prices" over all dates        
     df_main = df_main.sort_values(['total_price']).reset_index(drop=True)
     return df_main
 

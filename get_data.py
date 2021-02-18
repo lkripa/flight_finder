@@ -20,9 +20,9 @@ def match_skyscanner(city_list):
     """
     city_id = []
     table = pd.read_csv('Data/city_codes.csv')
-    # Process inputs with spaces
-    if len(city_list) > 1 and city_list[1][0] == " ":
-        city_list[1] = city_list[1][1:]
+    # Uncomment to process user inputs with spaces
+    # if len(city_list) > 1 and city_list[1][0] == " ":
+    #     city_list[1] = city_list[1][1:]
 
     for city in city_list:
         city_id.append(list( table.loc[table['city_user'] == city, 'iata_sky_code'] ))
@@ -67,15 +67,15 @@ def get_user_params(origin_list, show_flight_info ):
         print()
         print('The names provided don\'t match any cities or countries! Please try again: ')
 
-    while True:
-        # destination_list = (input('Please provide possible destinations (separated by a comma): ')).split(',')
-        # destination_list = ['Los Angeles (US)', 'London (GB)']
-        destination_list = ['London (GB)']
-        try:
-            destination_list_ids = match_skyscanner(destination_list)
-            break
-        except:
-            print('The names provided don\'t match any cities or countries! Please try again: ')  
+    # while True:
+    # destination_list = (input('Please provide possible destinations (separated by a comma): ')).split(',')
+    # destination_list = ['Los Angeles (US)', 'London (GB)']
+    destination_list = ['London (GB)']
+    try:
+        destination_list_ids = match_skyscanner(destination_list)
+        break
+    except:
+        print('The names provided don\'t match any cities or countries! Please try again: ')  
     
     # date_outbound = input('Please provide the desired outbound date (yyyy-mm-dd): ')
     # date_inbound = input('Please provide the desired inbound date (yyyy-mm-dd), or enter a space if only one-way trip: ')
@@ -99,14 +99,17 @@ def get_user_params(origin_list, show_flight_info ):
         'date_outbound' : date_outbound,
         'date_inbound' : date_inbound,
         'num_flights' : num_flights,
-        # 'root_url': "https://skyscanner-skyscanner-flight-search-v1.p.rapidapi.com/apiservices/browsequotes/v1.0/",
         'root_url': "https://skyscanner-skyscanner-flight-search-v1.p.rapidapi.com/apiservices/browsequotes/v1.0/",
         'show_flight_info': show_flight_info
         }
 
     return params, return_trip
 
-def pauseAPI():
+def pause_API():
+    """
+    API Rate Limit: 50 per minute (unlimited requests)
+    Create a pause to allow all the calls to go through.
+    """
     print("-----------")
     print("-----------")
     print("PAUSED")
@@ -147,11 +150,10 @@ def get_flights(headers, params, return_trip):
             try:
                 count += 1
                 # Pause API request because of Basic account limit
-                # add 
                 if count % 50 == 0:
-                    pauseAPI()
+                    pause_API()
                     
-                print("-----------Goes in---------------", count)
+                print("-----------Request from API---------------", count)
                 # API request - Browse Flight Searches
                 myurl = params['root_url'] + params['origin_country'] + "/" + params['currency'] + "/" + params['locale'] + "/"  + \
                     origin + "/" + destination + "/" + params['date_outbound']
@@ -165,7 +167,7 @@ def get_flights(headers, params, return_trip):
                 print(r.text)
                 temp = json.loads(r.text)
                 if temp == {'message': 'You have exceeded the rate limit per minute for your plan, BASIC, by the API provider'}:
-                    pauseAPI()
+                    pause_API()
                 print(temp)
                 # Extract relevant flight info
                 # build dicts with IDs (int) : IATA codes of airports or names of carriers
@@ -198,8 +200,7 @@ def get_flights(headers, params, return_trip):
                         df_outbound = df_outbound.append({'origin_sky_id': origin_sky_id, 'origin_iata_id': origin_iata_id, \
                              'dest_sky_id':dest_sky_id, 'dest_iata_id':dest_iata_id, 'price':price, \
                                 'carrier': carrier_name, 'date': date}, ignore_index=True)
-                        # print(df_outbound)
-                        # print("---- DF Outbound ----")
+                        
                         if return_trip:
                             origin_inbound = quotes["InboundLeg"]["OriginId"]
                             dest_inbound = quotes["InboundLeg"]["DestinationId"]
