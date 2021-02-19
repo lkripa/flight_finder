@@ -22,7 +22,7 @@ class Places():
             else:
                 print('Query doesn\'t match any names')
         except:
-            continue
+            print('Couldn\'t send request')
 
 def main(query='London'):
 
