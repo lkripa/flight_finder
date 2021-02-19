@@ -13,11 +13,16 @@ class Places():
         self.df_places = pd.DataFrame(columns = columns)
 
     def request_place(self, query):
-        response = requests.request("GET", self.url, headers=self.headers, params=query)
-        temp = json.loads(response.text)
-        if 'Places' in temp:
-            for place in temp['Places']:
-                self.df_places = self.df_places.append({'sky_id': place['PlaceId'], 'name': place['PlaceName'], 'region': place['RegionId'], 'country': place['CountryName']}, ignore_index=True)
+        try:
+            response = requests.request("GET", self.url, headers=self.headers, params=query)
+            temp = json.loads(response.text)
+            if 'Places' in temp:
+                for place in temp['Places']:
+                    self.df_places = self.df_places.append({'sky_id': place['PlaceId'], 'name': place['PlaceName'], 'region': place['RegionId'], 'country': place['CountryName']}, ignore_index=True)
+            else:
+                print('Query doesn\'t match any names')
+        except:
+            continue
 
 def main(query='London'):
 
