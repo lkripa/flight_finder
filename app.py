@@ -5,17 +5,19 @@ from get_data import get_user_params, get_flights
 from calculate_cheapest import get_common_dest, save_df_to_json
 import config
 import time
+import pandas as pd
 
 
 app = Flask(__name__)
 CORS(app)
+table = pd.read_csv('Data/city_codes.csv')
 
 @app.route('/cityPost', methods=['POST'])
 def cityPost():
   message = request.get_json(force=True)
   print(message)
   origin_list = message["input"]
-  # main(origin_list)
+  destination_list = ['London (GB)']
   show_flight_info=False
   headers = {
   'x-rapidapi-key': config.api_key,
@@ -25,10 +27,10 @@ def cityPost():
   print("Processing user-defined parameters...")
   print()
   start = time.perf_counter()
-  params, return_trip = get_user_params(origin_list, show_flight_info)
+  params, return_trip = get_user_params(origin_list, destination_list, table, show_flight_info)
 
   print("Requesting flight data...")
-  df_outbound, df_inbound = get_flights(headers, params, return_trip)
+  df_outbound, df_inbound = get_flights(headers, params, table, return_trip)
   marker1 = time.perf_counter()
   #! Here is the time suckers
   print(f"marker1 from beginning in {marker1 - start:0.4f} seconds")
