@@ -1,7 +1,7 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 import json
-from get_data import get_user_params, get_flights
+from get_data import get_params, get_flights
 from calculate_cheapest import get_common_dest, save_df_to_json
 import config
 import time
@@ -16,18 +16,22 @@ table = pd.read_csv('Data/city_codes.csv')
 def cityPost():
   message = request.get_json(force=True)
   print(message)
+  # -- Arguments here --
   origin_list = message["input"]
   destination_list = ['London (GB)']
+  date_outbound = 'anytime'
+  num_flights = 3
   show_flight_info=False
+
   headers = {
-  'x-rapidapi-key': config.api_key,
-  'x-rapidapi-host': "skyscanner-skyscanner-flight-search-v1.p.rapidapi.com"
+    'x-rapidapi-key': config.api_key,
+    'x-rapidapi-host': "skyscanner-skyscanner-flight-search-v1.p.rapidapi.com"
   }
 
   print("Processing user-defined parameters...")
   print()
   start = time.perf_counter()
-  params, return_trip = get_user_params(origin_list, destination_list, table, show_flight_info)
+  params, return_trip = get_params(origin_list, destination_list, date_outbound, num_flights, table, show_flight_info)
 
   print("Requesting flight data...")
   df_outbound, df_inbound = get_flights(headers, params, table, return_trip)
@@ -62,35 +66,11 @@ def cityPost():
       #df_common_dest_inbound = get_common_dest(df_inbound)
       
       # have to figure out how to combine inbound and outbound
-      # 
+
   stop = time.perf_counter()
   print(f"cityPost from beginning in {stop - start:0.4f} seconds")
   print()
   print('Done!')
 
-    
-  # response = {
-  #       'input': message['input']
-  #   }
   response = json.load(open('Data/sorted_common_dest.json', 'r'))
   return response
-
-# @app.route('/cityGet', methods=['GET'])
-# def cityGet():
-#   response = json.load(open('Data/sorted_common_dest.json', 'r'))
-#   return response
-
-# @app.route('/testpost', methods=['POST'])
-# def testpost(message):
-#     response = {
-#         'input': message['input'],
-#         'output': 'result depending on input',
-#     }
-#     return jsonify(response)
-
-# @app.route('/testget', methods=['GET'])
-# def testget():
-#     response = {
-#         'output': 'getting some stuff',
-#     }
-#     return jsonify(response)

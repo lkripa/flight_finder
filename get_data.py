@@ -8,9 +8,6 @@ import re
 
 # TODO: handle inbound legs - for now only doing specific airports so limits the return flights,
 #       check for valid currencies
-#       offer date range for inbound and outbound (vs. specific dates)
-#       implement speed test to find the 40 second delay
-#       figure out why when inbound is active (3x longer processing)
 
 def match_skyscanner(city_list, table):
     """
@@ -21,9 +18,6 @@ def match_skyscanner(city_list, table):
     """
     city_id = []
     # table = pd.read_csv('Data/city_codes.csv')
-    # Uncomment to process user inputs with spaces
-    # if len(city_list) > 1 and city_list[1][0] == " ":
-    #     city_list[1] = city_list[1][1:]
 
     for city in city_list:
         city_id.append(list( table.loc[table['city_user'] == city, 'iata_sky_code'] ))
@@ -44,50 +38,81 @@ def assign_city_names(airport_iata_code, table):
 
     return city_name
 
-def get_user_params(origin_list, destination_list, table, show_flight_info):
+def user_input():
     """
-    Define user preferences
+    Define user preferences FROM PYTHON
+    Return user parameters for get_params()
+    """
+    # ask user for data and match with names in database
+    while True:
+        origin_list = (input('Please provide the two origin cities - ex. Madrid (ES),Paris(FR) : ')).split(',')
+        destination_list = (input('Please provide the possible destination - ex. London (GB) : ')).split(',')
+        
+        # removes a space if one is accidentally added
+        if len(origin_list) > 1 and origin_list[1][0] == " ":
+            origin_list[1] = origin_list[1][1:]
+        # checks for correct string formatting
+        rex = re.compile("^[A-Z][a-z]*\s{1}[(][A-Z]{2}[)]$")
+        try:
+            if rex.match(origin_list[0]) and rex.match(origin_list[1]) and rex.match(destination_list[0]):
+                print("Correct format")
+            else:
+                raise TypeError("Wrong string format")
+            break
+        except TypeError:
+            print()
+            print('The city provided is not in the correct format! Take a look at the example. Please try again: ')
+    while True:
+        date_outbound = input('Please provide the desired outbound date (yyyy-mm-dd): ')
+        rex = re.compile("^202[1-9][-][0-1][0-9][-][0-3][0-9]$")
+        try:
+            if rex.match(date_outbound):
+                print("Correct format")
+            else:
+                raise TypeError("Wrong date format")
+            break
+        except TypeError:
+            print()
+            print('Invalid Date. Please try again: ')
+    num_flights = input('How many flights would you like to see? (ex. enter 3 to see top 3 cheapest flights) ')
+    return origin_list, destination_list, date_outbound, num_flights
+
+def get_params(origin_list, destination_list, date_outbound, num_flights, table, show_flight_info):
+    """
+    Define user preferences from python or webapp
     Return dict of parameters, and return_trip to indicate whether one-way or round-trip
 
-    once we set up front-end: would use get_user_params (origin_list, destination_list, date_outbound, date_inbound)
-    with those arguments provided by saved user queries from webapp
+    app.py sends arguments here by saved user queries from webapp
     """
     #default
     return_trip = False
 
     # ask user for data and match with names in database
-    # while True:
-        # origin_list = (input('Please provide the two origin cities (separated by a comma): ')).split(',')
-        # origin_list = message["input"] #['Madrid (ES)', 'Zurich (CH)']
-
-        # origin_list = ['Miami (US)', 'New York (US)']
-    try:
-        origin_list_ids = (match_skyscanner(origin_list, table))
-        
-    except:
-        print()
-        print('The names provided don\'t match any cities or countries! Please try again: ')
-
-    # while True:
-    # destination_list = (input('Please provide possible destinations (separated by a comma): ')).split(',')
-    # destination_list = ['Los Angeles (US)', 'London (GB)']
-    # destination_list = ['London (GB)']
-    try:
-        destination_list_ids = match_skyscanner(destination_list, table)
-    except:
-        print('The names provided don\'t match any cities or countries! Please try again: ')  
     
-    # date_outbound = input('Please provide the desired outbound date (yyyy-mm-dd): ')
+    # while True:
+    # try:
+    origin_list_ids = (match_skyscanner(origin_list, table))
+        
+    # except:
+    #     print()
+    #     print('The names provided don\'t match any cities or countries! Please try again: ')
+
+    # while True:
+    # try:
+    destination_list_ids = match_skyscanner(destination_list, table)
+    # except:
+    #     print()
+        # print('The names provided don\'t match any cities or countries! Please try again: ')  
+    
     # date_inbound = input('Please provide the desired inbound date (yyyy-mm-dd), or enter a space if only one-way trip: ')
-    date_outbound ='anytime'
+    
     date_inbound = ' '
     if date_inbound == ' ':
         date_inbound = None
     else:
         return_trip = True
         print('       return trip confirmed!')
-    # num_flights = input('How many flights would you like to see? (ex enter 3 to see top 3 cheapest flights) ')
-    num_flights = 3
+    
     print()
 
     params = {
@@ -147,6 +172,7 @@ def get_flights(headers, params, table, return_trip):
     stop1 = time.perf_counter()
     print(f"get_flights after API in {stop1 - beginning:0.4f} seconds")
     
+    #! Delay is here ~5 secs
     for origin in tqdm(params['origin']):
         stop2 = time.perf_counter()
         print(f"get_flights after API in:--{origin}-- {stop2 - stop1:0.4f} seconds")
@@ -243,7 +269,6 @@ def get_flights(headers, params, table, return_trip):
     print(f"get_flights after API in:== beginning of get_flights to end of for-loops== {stop4 - beginning:0.4f} seconds")
     start = time.perf_counter()
     # add corresponding city names to dataframes
-    #! This is the part that is taking long ~ 9 seconds
     try:
         df_outbound['origin_city_name'] = df_outbound.apply(lambda row: assign_city_names(row['origin_iata_id'], table), axis=1)
         df_outbound['dest_city_name'] = df_outbound.apply(lambda row: assign_city_names(row['dest_iata_id'], table), axis=1)
@@ -261,14 +286,13 @@ def get_flights(headers, params, table, return_trip):
 
 def main(show_flight_info=False):
     table = pd.read_csv('Data/city_codes.csv')
-    origin_list = ["Madrid (ES)", "Zurich (CH)"]
-    destination_list = ['London (GB)']
-    rex = re.compile("^[A-Z][a-z]*\s{1}[(][A-Z]{2}[)]$")
-    if rex.match(origin_list[0]) and rex.match(origin_list[1]) and rex.match(destination_list[0]):
-        print("Correct format")
-    else:
-        raise TypeError("Wrong string format")
-    
+    # -- Uncomment to hard-code --
+    # origin_list = ["Madrid (ES)", "Zurich (CH)"]
+    # destination_list = ['London (GB)']
+    # date_outbound = "2021-04-01"
+    # num_flights = 3
+    origin_list, destination_list, date_outbound, num_flights = user_input()
+
     headers = {
     'x-rapidapi-key': config.api_key,
     'x-rapidapi-host': "skyscanner-skyscanner-flight-search-v1.p.rapidapi.com"
@@ -276,7 +300,7 @@ def main(show_flight_info=False):
 
     print("Processing user-defined parameters...")
     print()
-    params, return_trip = get_user_params(origin_list, destination_list, table, show_flight_info)
+    params, return_trip = get_params(origin_list, destination_list, date_outbound, num_flights, table, show_flight_info)
 
     print("Requesting flight data...")
     df_outbound, df_inbound = get_flights(headers, params, table, return_trip)
