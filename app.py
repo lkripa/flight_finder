@@ -15,7 +15,7 @@ table = pd.read_csv('Data/city_codes.csv')
 @app.route('/cityPost', methods=['POST'])
 def cityPost():
   message = request.get_json(force=True)
-  print(message)
+  print("==============================")
   # -- Arguments here --
   origin_list = message["input"]
   destination_list = ['London (GB)']
@@ -29,19 +29,19 @@ def cityPost():
   }
 
   print("Processing user-defined parameters...")
-  print()
+  
   start = time.perf_counter()
   params, return_trip = get_params(origin_list, destination_list, date_outbound, num_flights, table, show_flight_info)
 
   print("Requesting flight data...")
   df_outbound, df_inbound = get_flights(headers, params, table, return_trip)
+  
   marker1 = time.perf_counter()
   #! Here is the time suckers
-  print(f"marker1 from beginning in {marker1 - start:0.4f} seconds")
+  print(f"  marker 1 from beginning in {marker1 - start:0.4f} seconds")
   num = len(df_outbound)
-  print(f"Number of possible flights to be analyzed: {num}")
-  print()
-  print("Done!")
+  print(f"Number of possible flights to be analyzed: {num}", end="\n\n")
+  
 
   # get common destinations for outbound and inbound trips
   print('OUTBOUND FLIGHTS-------')
@@ -50,7 +50,7 @@ def cityPost():
   marker2 = time.perf_counter()
   df_common_dest_outbound = get_common_dest(df_outbound)
   marker3 = time.perf_counter()
-  print(f"marker2-3 from beginning in {marker3 - marker2:0.4f} seconds")
+  print(f"  marker 2-3 in {marker3 - marker2:0.4f} seconds")
 
   print()
   print('Saving flights to sorted_common_dest.txt')
@@ -68,9 +68,11 @@ def cityPost():
       # have to figure out how to combine inbound and outbound
 
   stop = time.perf_counter()
-  print(f"cityPost from beginning in {stop - start:0.4f} seconds")
-  print()
+  print(f"cityPost from beginning in {stop - start:0.4f} seconds", end="\n\n")
+ 
   print('Done!')
-
+  print("==============================")
+  
+  # sending to React
   response = json.load(open('Data/sorted_common_dest.json', 'r'))
   return response

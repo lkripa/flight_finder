@@ -166,19 +166,18 @@ def get_flights(headers, params, table, return_trip):
     df_outbound = pd.DataFrame(columns = columns)
     df_inbound = pd.DataFrame(columns = columns)
 
-    print()
-    print('Processing flight data...')
+    print('Processing flight data...', end="\n\n")
     count = 0
     stop1 = time.perf_counter()
-    print(f"get_flights after API in {stop1 - beginning:0.4f} seconds")
+    # print(f"get_flights setup in {stop1 - beginning:0.4f} seconds")
     
     #! Delay is here ~5 secs
     for origin in tqdm(params['origin']):
         stop2 = time.perf_counter()
-        print(f"get_flights after API in:--{origin}-- {stop2 - stop1:0.4f} seconds")
+        print(f"get_flights after API FOR--{origin}-- {stop2 - stop1:0.4f} seconds")
         for destination in params['destination']:
             stop3 = time.perf_counter()
-            print(f"get_flights after API in:--{destination}-- {stop3 - stop2:0.4f} seconds")
+            print(f"    get_flights after API TO: {destination} {stop3 - stop2:0.4f} seconds")
             try:
                 count += 1
                 # Pause API request because of Basic account limit
@@ -201,6 +200,8 @@ def get_flights(headers, params, table, return_trip):
                 temp = json.loads(r.text)
                 if temp == {'message': 'You have exceeded the rate limit per minute for your plan, BASIC, by the API provider'}:
                     pause_API()
+                # stop4 = time.perf_counter()
+                # print(f"      API CALL: {stop4 - stop3:0.4f} seconds")
                 # print(temp)
                 # Extract relevant flight info
                 # build dicts with IDs (int) : IATA codes of airports or names of carriers
@@ -211,7 +212,8 @@ def get_flights(headers, params, table, return_trip):
                 for carrier in temp["Carriers"]:
                     carrier_ID[carrier["CarrierId"]] = carrier["Name"]
                 
-                
+                # stop5 = time.perf_counter()
+                # print(f"      2 For-Loops for Carrier and Places: {stop5 - stop4:0.4f} seconds")
                 # assign route info (with matched names) to outbound and inbound lists
                 if "Quotes" in temp: 
                     for quotes in temp["Quotes"]:
@@ -260,13 +262,15 @@ def get_flights(headers, params, table, return_trip):
                                 print(f"Carrier: {carrier_ID[carrier_inbound[0]]}")     
                                 print()         
                             print(f"Total price: {price} {currency}")
+                # stop6 = time.perf_counter()
+                # print(f"      Create df_outbound: {stop6 - stop5:0.4f} seconds")
             except:
                 # airport is not in Skyscanner database
                 # ideally can get a database of valid skyscanner airports and further filter the city_codes table with it
                 continue
     
-    stop4 = time.perf_counter()
-    print(f"get_flights after API in:== beginning of get_flights to end of for-loops== {stop4 - beginning:0.4f} seconds")
+    stop7 = time.perf_counter()
+    print(f"get_flights after API in:== beginning of get_flights to end of for-loops== {stop7 - beginning:0.4f} seconds")
     start = time.perf_counter()
     # add corresponding city names to dataframes
     try:
@@ -298,16 +302,14 @@ def main(show_flight_info=False):
     'x-rapidapi-host': "skyscanner-skyscanner-flight-search-v1.p.rapidapi.com"
     }
 
-    print("Processing user-defined parameters...")
-    print()
+    print("Processing user-defined parameters...", end="\n\n")
     params, return_trip = get_params(origin_list, destination_list, date_outbound, num_flights, table, show_flight_info)
 
-    print("Requesting flight data...")
+    print("Requesting flight data...", end="\n\n")
     df_outbound, df_inbound = get_flights(headers, params, table, return_trip)
     
     num = len(df_outbound)
     print(f"Number of possible flights to be analyzed: {num}")
-    print()
     print("Done!")
 
     return params, df_outbound, df_inbound
