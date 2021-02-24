@@ -10,3 +10,6 @@ __pycache__
 
 #virtual env
 /venv
+
+#test sorted_common_dest json
+copy_sorted_common_dest.json
