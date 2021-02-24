@@ -17,12 +17,12 @@ def cityPost():
   message = request.get_json(force=True)
   print("==============================")
   # -- Arguments here --
-  origin_list = message["input"]
-  destination_list = ['London (GB)']
+  origin_list = message["inputOriginCities"]
+  destination_list = message["inputDestinationCity"]
+  print(origin_list, destination_list)
   date_outbound = 'anytime'
   num_flights = 3
   show_flight_info=False
-
   headers = {
     'x-rapidapi-key': config.api_key,
     'x-rapidapi-host': "skyscanner-skyscanner-flight-search-v1.p.rapidapi.com"
@@ -42,37 +42,45 @@ def cityPost():
   num = len(df_outbound)
   print(f"Number of possible flights to be analyzed: {num}", end="\n\n")
   
+  if num != 0:
+    # get common destinations for outbound and inbound trips
+    print('OUTBOUND FLIGHTS-------')
+    print('Date: ', params['date_outbound'])
+    print('Getting common destinations and calculating prices...')
+    marker2 = time.perf_counter()
+    df_common_dest_outbound = get_common_dest(df_outbound)
+    marker3 = time.perf_counter()
+    print(f"  marker 2-3 in {marker3 - marker2:0.4f} seconds")
 
-  # get common destinations for outbound and inbound trips
-  print('OUTBOUND FLIGHTS-------')
-  print('Date: ', params['date_outbound'])
-  print('Getting common destinations and calculating prices...')
-  marker2 = time.perf_counter()
-  df_common_dest_outbound = get_common_dest(df_outbound)
-  marker3 = time.perf_counter()
-  print(f"  marker 2-3 in {marker3 - marker2:0.4f} seconds")
+    print()
+    print('Saving flights to sorted_common_dest.txt')
+    save_df_to_json(df_common_dest_outbound, 'Data/sorted_common_dest.json')
+    print()
+    # print_top_flights(params, df_common_dest_outbound)
 
-  print()
-  print('Saving flights to sorted_common_dest.txt')
-  save_df_to_json(df_common_dest_outbound, 'Data/sorted_common_dest.json')
-  print()
-  # print_top_flights(params, df_common_dest_outbound)
+    if params['date_inbound'] != None:
+        print()
+        print('INBOUND FLIGHTS-------')
+        print('Date: ', params['date_inbound'])
+        print('Getting common destinations and calculating prices...')
+        #df_common_dest_inbound = get_common_dest(df_inbound)
+        
+        # have to figure out how to combine inbound and outbound
 
-  if params['date_inbound'] != None:
-      print()
-      print('INBOUND FLIGHTS-------')
-      print('Date: ', params['date_inbound'])
-      print('Getting common destinations and calculating prices...')
-      #df_common_dest_inbound = get_common_dest(df_inbound)
-      
-      # have to figure out how to combine inbound and outbound
-
-  stop = time.perf_counter()
-  print(f"cityPost from beginning in {stop - start:0.4f} seconds", end="\n\n")
- 
-  print('Done!')
-  print("==============================")
+    stop = time.perf_counter()
+    print(f"cityPost from beginning in {stop - start:0.4f} seconds", end="\n\n")
   
-  # sending to React
-  response = json.load(open('Data/sorted_common_dest.json', 'r'))
+    print('Done!')
+    print("==============================")
+    
+    # sending to React
+    response = json.load(open('Data/sorted_common_dest.json', 'r'))
+    
+  else:
+    print("Blank json sent to react")
+    # Uncomment when API is back online
+    # sending to React
+    # response = {}
+    response = json.load(open('Data/sorted_common_dest.json', 'r'))
+
   return response

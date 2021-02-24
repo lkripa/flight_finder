@@ -196,13 +196,13 @@ def get_flights(headers, params, table, return_trip):
                     # myurl += '/' + params["date_inbound"]
                 # print(myurl)
                 r = requests.request("GET", myurl, headers=headers)
-                # print(r.text)
+                print(r.text)
                 temp = json.loads(r.text)
                 if temp == {'message': 'You have exceeded the rate limit per minute for your plan, BASIC, by the API provider'}:
                     pause_API()
                 # stop4 = time.perf_counter()
                 # print(f"      API CALL: {stop4 - stop3:0.4f} seconds")
-                # print(temp)
+                print(temp)
                 # Extract relevant flight info
                 # build dicts with IDs (int) : IATA codes of airports or names of carriers
                 
@@ -280,8 +280,9 @@ def get_flights(headers, params, table, return_trip):
         if return_trip:
             df_inbound['origin_city_name'] = df_inbound.apply(lambda row: assign_city_names(row['origin_iata_id'], table), axis=1)
             df_inbound['dest_city_name'] = df_inbound.apply(lambda row: assign_city_names(row['dest_iata_id'], table), axis=1)
-    except Exception:
-        print('Origin City Not Found')
+    except Exception as error:
+        print('Origin City Not Found: ')
+        print("     Exception Error:",error)
     stop = time.perf_counter()
     print(f"get_flights after API in when creating df_outbound {stop - start:0.4f} seconds")
     print(f"get_flights from beginning in {stop - beginning:0.4f} seconds")

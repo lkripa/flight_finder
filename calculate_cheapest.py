@@ -6,7 +6,6 @@ import numpy as np
 # TODO: 
 #       * extend beyond 2 origin cities?
 #       * figure out how to combine with return flight
-#       * combine arrays with different dates more effectively 
 
 ''' 
     Ideas for Frontend:
