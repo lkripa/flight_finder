@@ -18,9 +18,10 @@ The goal of this project is to **find the optimal (in this case, cheapest) commo
 3. Run `flask run` to start server
 4. Run `$python calculate_cheapest.py`. You will be prompted to provide two user cities, possible destination cities that you wish to consider, outbound and inbound flight dates, and number of flights (ranked in order of total price) to display
   * Note: You'll have to provide your personal [RapidAPI key](https://rapidapi.com/skyscanner/api/skyscanner-flight-search) (free!). Once you have one, assign `get_key()` in a separate `config_api.py` file. 
-  ``` def get_key():
-        api_key='key here'
-        return api_key 
+  ``` 
+  def get_key():
+    api_key = 'key here'
+    return api_key 
   ```
 
 ## Files
