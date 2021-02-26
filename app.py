@@ -1,16 +1,24 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-import json
-from get_data import get_params, get_flights
-from calculate_cheapest import get_common_dest, save_df_to_json
-import config
-import time
+from os import environ
 import pandas as pd
+import json
+import time
+from get_data import get_params, get_flights
+from config_api import get_key
+from calculate_cheapest import get_common_dest, save_df_to_json
 
 
 app = Flask(__name__)
 CORS(app)
 table = pd.read_csv('Data/city_codes.csv')
+
+@app.route('/test', methods=['GET'])
+def test():
+  response = {
+    'test': 'successful',
+  }
+  return jsonify(response)
 
 @app.route('/cityPost', methods=['POST'])
 def cityPost():
@@ -22,9 +30,9 @@ def cityPost():
   print(origin_list, destination_list)
   date_outbound = 'anytime'
   num_flights = 3
-  show_flight_info=False
+  show_flight_info = False
   headers = {
-    'x-rapidapi-key': config.api_key,
+    'x-rapidapi-key': get_key(),
     'x-rapidapi-host': "skyscanner-skyscanner-flight-search-v1.p.rapidapi.com"
   }
 
@@ -80,7 +88,10 @@ def cityPost():
     print("Blank json sent to react")
     # Uncomment when API is back online
     # sending to React
-    # response = {}
-    response = json.load(open('Data/sorted_common_dest.json', 'r'))
+    response = {}
+    # response = json.load(open('Data/sorted_common_dest.json', 'r'))
 
   return response
+
+if __name__ == '__main__':
+  app.run(debug=False, host='0.0.0.0', port=int(environ.get('PORT', 8080)))

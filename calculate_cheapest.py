@@ -1,7 +1,8 @@
 import get_data
 import pandas as pd
-import json
 import numpy as np
+import json
+
 
 # TODO: 
 #       * extend beyond 2 origin cities?
@@ -129,6 +130,7 @@ def print_top_flights(params, df_common_dest):
            # print("-----------")
     else:
         print("No common destination found")
+
 def main():
     # get all possible flights and user params from get_data script 
     params, df_outbound, df_inbound = get_data.main()

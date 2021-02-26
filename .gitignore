@@ -3,7 +3,7 @@
 /.idea
 
 #api key
-config.py
+config_api.py
 
 #misc
 __pycache__

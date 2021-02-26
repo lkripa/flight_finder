@@ -1,10 +1,11 @@
 import requests, json
 import sys
-import pandas as pd
-from tqdm import tqdm
-import config
 import time
 import re
+import pandas as pd
+from tqdm import tqdm
+from config_api import get_key
+
 
 # TODO: handle inbound legs - for now only doing specific airports so limits the return flights,
 #       check for valid currencies
@@ -194,7 +195,7 @@ def get_flights(headers, params, table, return_trip):
                     #querystring = {"inboundpartialdate" : params['date_inbound']}
                     #r = requests.request("GET", myurl, headers=headers, params=querystring)
                     # myurl += '/' + params["date_inbound"]
-                # print(myurl)
+                print(myurl)
                 r = requests.request("GET", myurl, headers=headers)
                 print(r.text)
                 temp = json.loads(r.text)
@@ -296,10 +297,11 @@ def main(show_flight_info=False):
     # destination_list = ['London (GB)']
     # date_outbound = "2021-04-01"
     # num_flights = 3
+    # -- Comment to hard-code --
     origin_list, destination_list, date_outbound, num_flights = user_input()
-
+    
     headers = {
-    'x-rapidapi-key': config.api_key,
+    'x-rapidapi-key': get_key(),
     'x-rapidapi-host': "skyscanner-skyscanner-flight-search-v1.p.rapidapi.com"
     }
 
