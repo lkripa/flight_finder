@@ -53,7 +53,7 @@ Available Airports:
 ## For Full Webapp Functionality
 ### Installation
  - Install [npm](https://www.npmjs.com/get-npm)
- - Download this repo with `git clone https://github.com/lkripa/projectNeptune.git`
+ - Download the [projectNeptune repo](https://github.com/lkripa/projectNeptune) with `git clone https://github.com/lkripa/projectNeptune.git`
  - Run `npm install` within the main folder 
 
 ### Run Flask locally
